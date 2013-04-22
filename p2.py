@@ -1,4 +1,7 @@
-#!/usr/bin/python3.3
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
 
 from base64 import b16encode, b16decode
 import sys

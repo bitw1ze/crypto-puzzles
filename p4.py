@@ -1,3 +1,16 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+"""
++=====================+
+|       ANSWER        |
++=====================+
+
+Plaintext: Now that the party is jumping
+
+"""
 
 from p3 import xor_byte_bruteforce
 from base64 import b16decode

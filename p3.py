@@ -1,6 +1,19 @@
-#!/usr/bin/python3.3
+#!/usr/bin/env python3.2
 
-from base64 import b16decode
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+"""
++=====================+
+|       ANSWER        |
++=====================+
+
+Key: 0x58
+Plaintext: Cooking MC's like a pound of bacon
+
+"""
+
+from base64 import b16decode, b16encode
 import string, sys
 
 def xor_byte_bruteforce(ct):
@@ -40,8 +53,9 @@ def calc_score(pt):
 
 def main():
   ciphertext = b16decode(b'1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736', casefold=True)
-  plaintext, _, _ = xor_byte_bruteforce(ciphertext)
-  print(plaintext.decode('utf8'))
+  plaintext, _, key = xor_byte_bruteforce(ciphertext)
+  print("Key: 0x%s" % b16encode(bytearray([key])).decode("utf8"))
+  print("Plaintext:", plaintext.decode('utf8'))
 
 if __name__ == '__main__':
   sys.exit(main())
