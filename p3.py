@@ -4,13 +4,13 @@ from base64 import b16decode
 import string, sys
 
 def xor_byte_bruteforce(ct):
-  plaintext, score = None, 0
-  for key in range(0, 256):
-    pt, sc = xor_byte_decrypt_and_score(ct, key)
+  plaintext, score, key = None, 0, 0
+  for k in range(0, 256):
+    pt, sc = xor_byte_decrypt_and_score(ct, k)
     if sc > score:
-      plaintext, score = pt, sc
+      plaintext, score, key = pt, sc, k
 
-  return plaintext, score
+  return plaintext, score, key
 
 def xor_byte_crypt(msg, key):
   return bytearray([m ^ key for m in msg])
@@ -40,7 +40,7 @@ def calc_score(pt):
 
 def main():
   ciphertext = b16decode(b'1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736', casefold=True)
-  plaintext, _ = xor_byte_bruteforce(ciphertext)
+  plaintext, _, _ = xor_byte_bruteforce(ciphertext)
   print(plaintext.decode('utf8'))
 
 if __name__ == '__main__':
