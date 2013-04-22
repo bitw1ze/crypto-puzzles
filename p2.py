@@ -1,7 +1,7 @@
 #!/usr/bin/python3.3
 
 from base64 import b16encode, b16decode
-from sys import exit
+import sys
 
 def fixed_xor(msg1, msg2):
   if len(msg1) != len(msg2):
@@ -15,4 +15,4 @@ def main():
   print(b16encode(fixed_xor(msg1, msg2)).decode("utf8"))
 
 if __name__ == '__main__':
-  exit(main())
+  sys.exit(main())

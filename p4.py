@@ -1,4 +1,5 @@
-from p3 import xor_bruteforce
+
+from p3 import xor_byte_bruteforce
 from base64 import b16decode
 from sys import exit
 
@@ -333,7 +334,7 @@ e03555453d1e31775f37331823164c341c09e310463438481019fb0b12fa
 def main():
   plaintext, score = None, 0
   for ct in ciphertexts:
-    pt, sc = (xor_bruteforce(b16decode(bytearray(ct, 'utf8'), True)))
+    pt, sc = (xor_byte_bruteforce(b16decode(bytearray(ct, 'utf8'), True)))
     if sc > score:
       plaintext, score = pt, sc
   

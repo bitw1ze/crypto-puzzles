@@ -1,7 +1,6 @@
 #!/usr/bin/python3.3
 
 import sys, base64
-from sys import exit
 from base64 import b64encode, b16decode
 
 def h2b64(msg):
