@@ -169,7 +169,7 @@ def flatten(lst):
 def identity(*args):
   return args[0]
 
-def cbc_encrypt(pt, cipher, iv, padf):
+def cbc_encrypt(pt, cipher, iv, padf=pkcs7_pad):
   """Encrypt plaintext bytes in CBC mode
 
   Arguments:
@@ -177,8 +177,9 @@ def cbc_encrypt(pt, cipher, iv, padf):
   cipher -- cipher object used to encrypt (must expose encrypt(ciphertext)
     method and block_size member)
   iv -- Initializion vector
-  padf -- Padding function to used in encryption. Must take two arguments:
-    bytes to pad and block size, and it should return the padded bytes.
+  padf -- Padding function to called before encryption. Must take two
+    arguments: bytes to pad and block size, and it should return the padded
+    bytes.
 
   Returns:
   Bytes encrypted in CBC mode
@@ -193,15 +194,15 @@ def cbc_encrypt(pt, cipher, iv, padf):
     ct += [cipher.encrypt(bytes(fixed_xor(pt[i], ct[i])))]
   return flatten(ct[1:])
 
-def cbc_decrypt(ct, cipher, iv, unpadf):
+def cbc_decrypt(ct, cipher, iv, unpadf=pkcs7_unpad):
   """Decrypt ciphertext bytes in CBC mode
 
   Arguments:
-  pt -- Plaintext bytes to encrypt
+  ct -- Ciphertext bytes to decrypt
   cipher -- cipher object used to decrypt (must expose decrypt(ciphertext)
     method and block_size member)
   iv -- Initializion vector
-  padf -- Padding function to used in encryption. Must take two arguments:
+  padf -- Padding function called after decryption. Must take two arguments:
     bytes to pad and block size, and it should return the padded bytes.
 
   Returns:
@@ -218,18 +219,25 @@ def cbc_decrypt(ct, cipher, iv, unpadf):
     pt += [fixed_xor(ct[i-1], cipher.decrypt(ct[i]))]
   return unpadf(flatten(pt), cipher.block_size)
 
+def aes_cbc_encrypt(pt, key, iv, padf=pkcs7_pad):
+  return cbc_encrypt(pt, AES.new(key, AES.MODE_ECB), iv, padf)
+
+def aes_cbc_decrypt(ct, key, iv, unpadf=pkcs7_unpad):
+  return cbc_decrypt(ct, AES.new(key, AES.MODE_ECB), iv, unpadf)
+
 def main():
   # test cbc encryption and decryption
-  cipher = AES.new(key=b'YELLOW SUBMARINE', mode=AES.MODE_ECB)
+  key = b'YELLOW SUBMARINE'
   iv = b"\x00"*16
-  ct = cbc_encrypt((b"A"*156), cipher, iv, pkcs7_pad)
+  pt = b'A'*156
+  ct = aes_cbc_encrypt(pt, key, iv)
   print(b64encode(ct).decode('utf8'))
 
-  pt = cbc_decrypt(ct, cipher, iv, pkcs7_unpad)
+  pt = aes_cbc_decrypt(ct, key, iv)
   print(pt.decode('utf8'))
 
   # decrypt the actual answer
-  plaintext = cbc_decrypt(b64decode(ciphertext), cipher, iv, pkcs7_unpad)
+  plaintext = aes_cbc_decrypt(b64decode(ciphertext), key, iv)
   print(plaintext.decode("utf8"))
 
 

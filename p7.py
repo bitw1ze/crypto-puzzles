@@ -161,13 +161,19 @@ S15AVD2QS1V6fhRimJSVyT6QuGb8tKRsl2N+a2Xze36vgMhw7XK7zh//jC2H
 
 from Crypto.Cipher import AES
 from base64 import b64decode
+from p10 import identity
+from p9 import pkcs7_pad, pkcs7_unpad
 import sys
 
-def aes_ecb_encrypt(pt, key):
-  return AES.new(key, AES.MODE_ECB).encrypt(pt)
+def aes_ecb_encrypt(pt, key, padf=pkcs7_pad):
+  if not padf:
+    padf = identity
+  return AES.new(key, AES.MODE_ECB).encrypt(bytes(padf(pt, AES.block_size)))
 
-def aes_ecb_decrypt(ct, key):
-  return AES.new(key, AES.MODE_ECB).decrypt(ct)
+def aes_ecb_decrypt(ct, key, unpadf=pkcs7_unpad):
+  if not unpadf:
+    unpadf = identity
+  return unpadf(AES.new(key, AES.MODE_ECB).decrypt(ct))
 
 def main():
   key = b'YELLOW SUBMARINE'
