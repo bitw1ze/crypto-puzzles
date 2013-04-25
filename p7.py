@@ -163,11 +163,16 @@ from Crypto.Cipher import AES
 from base64 import b64decode
 import sys
 
+def aes_ecb_encrypt(pt, key):
+  return AES.new(key, AES.MODE_ECB).encrypt(pt)
+
+def aes_ecb_decrypt(ct, key):
+  return AES.new(key, AES.MODE_ECB).decrypt(ct)
+
 def main():
-  cipher = AES.new(key=b'YELLOW SUBMARINE', mode=AES.MODE_ECB)
-  plaintext = cipher.decrypt(b64decode(ciphertext))
-  plaintext = plaintext[:-plaintext[-1]]
-  print(plaintext.decode("utf8"))
+  key = b'YELLOW SUBMARINE'
+  plaintext = aes_ecb_decrypt(b64decode(ciphertext), key)
+  print(plaintext.decode('utf8'))
 
 if __name__ == '__main__':
   sys.exit(main())
