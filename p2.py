@@ -4,13 +4,8 @@ _author_ = "Gabe Pike"
 _email_ = "gpike@isecpartners.com"
 
 from base64 import b16encode, b16decode
+from helpers import fixed_xor
 import sys
-
-def fixed_xor(msg1, msg2):
-  if len(msg1) != len(msg2):
-    raise Exception("Buffers are not same size!")
-
-  return bytearray([a ^ b for (a,b) in zip(msg1, msg2) ])
 
 def main():
   msg1 = b16decode(b'1c0111001f010100061a024b53535009181c', casefold=True)

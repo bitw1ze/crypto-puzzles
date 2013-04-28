@@ -157,17 +157,10 @@ kkIzWhQ5Rxd/vnM2QQr9Cxa2J9GXEV3kGDiZV90+PCDSVGY4VgF8y7GedI1h""".strip("\n"), "ut
 
 from Crypto.Cipher import AES
 from base64 import b64encode, b64decode
-from p8 import chunks
-from p2 import fixed_xor
 from p9 import pkcs7_pad, pkcs7_unpad
 from functools import reduce
 import operator, sys
-
-def flatten(lst):
-  return [] if not lst else reduce(lambda a,b: a+b, lst)
-
-def identity(*args):
-  return args[0]
+from helpers import chunks, flatten, identity, fixed_xor
 
 def cbc_encrypt(pt, cipher, iv, padf=pkcs7_pad):
   """Encrypt plaintext bytes in CBC mode

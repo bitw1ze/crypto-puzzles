@@ -161,7 +161,7 @@ S15AVD2QS1V6fhRimJSVyT6QuGb8tKRsl2N+a2Xze36vgMhw7XK7zh//jC2H
 
 from Crypto.Cipher import AES
 from base64 import b64decode
-from p10 import identity
+from helpers import identity
 from p9 import pkcs7_pad, pkcs7_unpad
 import sys
 

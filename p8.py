@@ -220,10 +220,8 @@ a6cadd53a2621482b7d66ecc82dc4ea6431bc0191c3801ac6b705df38c7fffe469043e5002096aca
 06df04188832b10afff94209d2aa1c8a123702de28234dcd3e0a7d36c1aa8449e6fa55e3e1e3d77d8424e87a45e38697755f84c49a99473797268113eb69098888947526035b246d00a630f6201ecc4075d8aa6604de73e2119e264e4c96751f2a67a2e46cf467a0df8f0520bcf4762b2715aba266d9b3f5e8fa67d12f9caac928b07ac3be99f41120655aa77f6433fc264673a92929e792187f87b5fda50cf2""".split("\n")
 
 from base64 import b16decode, b16encode
+from helpers import chunks
 import sys
-
-def chunks(s, n):
-  return [s[i:i+n] for i in range(0, len(s), n)]
 
 def detect_ecb(ct):
   blocks = chunks(ct, 16)
