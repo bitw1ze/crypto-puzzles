@@ -1,11 +1,22 @@
-from time import sleep
+"""
++========================+
+|        ANSWER          |
++========================+
+
+Plaintext: 
+
+Rollin' in my 5.0
+With my rag-top down so my hair can blow
+The girlies on standby waving just to say hi
+Did you stop? No, I just drove by
+"""
+
 from Crypto import Random
 from Crypto.Cipher import AES
 from random import randint
 from p7 import aes_ecb_encrypt, aes_ecb_decrypt
-from p10 import aes_cbc_encrypt, aes_cbc_decrypt
 from base64 import b64decode
-from p8 import chunks
+from helpers import chunks
 import sys
 
 key = Random.new().read(AES.block_size)
@@ -35,42 +46,46 @@ def detect_ecb(cryptf, block_size):
 
   return ct1[1] == ct2[1]
 
-def decrypt_ecb_block():
-  """ """
-
 def decrypt_ecb():
   block_size = find_blocksize(encryption_oracle)
   if not detect_ecb(encryption_oracle, block_size):
     raise Exception("Cipher not in ECB mode")
 
   ciphertext = encryption_oracle(b'')
-  decrypted = b'A'*block_size
-  cur = b''
+  plaintext = b'A'*block_size
+  pt_block = b''
   i = 1
-  while len(ciphertext) != len(decrypted[block_size:]):
-    dummy = decrypted[-(block_size-i%16):] if i % 16 != 0 else b''
-    pos = (len(decrypted) // block_size - 1)*block_size
+  for i in range(0, len(ciphertext)+1):
+# calculate known plaintext bytes used to pad
+    dummy = plaintext[-(block_size-i%16):] if i % 16 != 0 else b''
+# get position of ciphertext block we want to break
+    pos = (len(plaintext) // block_size - 1)*block_size
+# ciphertext we are trying to match with our known plaintext 
     target = encryption_oracle(dummy)[pos:pos+block_size]
     for j in range(0,255+1):
-      guess = dummy+cur+bytes([j])
+      guess = dummy+pt_block+bytes([j])
       ct = encryption_oracle(guess)[:block_size]
       if ct == target:
-        cur += bytes([j])
-        if len(cur) == block_size:
-          decrypted += cur
-          cur = b''
+        pt_block += bytes([j])
+        if len(pt_block) == block_size:
+          plaintext += pt_block
+          pt_block = b''
         break
-    i += 1
 
-  return decrypted[block_size:]
+  # add any leftover bytes at the end
+  if pt_block:
+    plaintext += pt_block
+
+  """ 
+  If using pkcs7 padding, the last byte will always be 0x01 because the
+  program assumes 0x01 is a valid byte, even though it is padding, and no
+  other ciphertexts after that will be able to match the actual padding. 
+  """ 
+
+  return plaintext[block_size:-1]
 
 def main():
-  '''
-  plaintext = b'A'*80
-  ciphertext = encryption_oracle(plaintext)
-  print("ECB mode") if detect_ecb(ciphertext) else print("CBC mode")
-  '''
-  print(decrypt_ecb())
+  print(decrypt_ecb().decode('utf8'))
     
 if __name__ == '__main__':
   sys.exit(main())
