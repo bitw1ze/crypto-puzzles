@@ -8,11 +8,3 @@ def flatten(lst):
 
 def identity(*args):
   return args[0]
-
-def fixed_xor(msg1, msg2):
-  if len(msg1) != len(msg2):
-    raise Exception("Buffers are not same size!")
-
-  return bytearray([a ^ b for (a,b) in zip(msg1, msg2) ])
-
-

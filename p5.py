@@ -5,10 +5,8 @@ _email_ = "gpike@isecpartners.com"
 
 from base64 import b16encode
 from itertools import cycle
+from cryptlib import xor_repeat_cipher
 import sys
-
-def xor_repeat_cipher(msg, key):
-  return bytearray([m ^ k for m, k in zip(msg, cycle(key))])
 
 def main():
   plaintext = b"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"

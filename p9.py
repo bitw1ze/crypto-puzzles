@@ -1,17 +1,11 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
 from base64 import b16encode
+from cryptlib import pkcs7_pad, pkcs7_unpad
 import sys
-
-def pkcs7_pad(pt, blocksize):
-  padlen = blocksize - len(pt) % blocksize
-  return bytearray(pt) + bytearray([padlen]*padlen)
-
-# might as well implement this too
-def pkcs7_unpad(ct, blocksize):
-  padlen = ct[-1]
-  if padlen > blocksize or not all((lambda x: x == padlen, ct[-padlen:])):
-    raise Exception("Invalid padding! I sure hope you MAC'd already...")
-
-  return ct[:-padlen]
 
 def main():
   padded_submarine = pkcs7_pad(b"YELLOW SUBMARINE", 20)

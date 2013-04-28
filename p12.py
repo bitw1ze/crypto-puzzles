@@ -1,3 +1,8 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
 """
 +========================+
 |        ANSWER          |
@@ -13,10 +18,9 @@ Did you stop? No, I just drove by
 
 from Crypto import Random
 from Crypto.Cipher import AES
-from random import randint
-from p7 import aes_ecb_encrypt, aes_ecb_decrypt
 from base64 import b64decode
 from helpers import chunks
+from cryptlib import aes_ecb_encrypt, aes_ecb_decrypt
 import sys
 
 key = Random.new().read(AES.block_size)

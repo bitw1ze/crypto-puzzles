@@ -1,9 +1,13 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
 from Crypto import Random
 from Crypto.Cipher import AES
 from random import randint
-from p7 import aes_ecb_encrypt, aes_ecb_decrypt
-from p10 import aes_cbc_encrypt, aes_cbc_decrypt
-from p8 import chunks, detect_ecb
+from cryptlib import aes_ecb_encrypt, aes_ecb_decrypt, aes_cbc_encrypt, aes_cbc_decrypt
+from p8 import detect_ecb
 import sys
 
 def encryption_oracle(pt): 

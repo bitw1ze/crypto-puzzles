@@ -1,5 +1,8 @@
 #!/usr/bin/env python3.2
 
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
 """
 +===============================+
 |        ANSWER (again)         |
@@ -157,66 +160,9 @@ kkIzWhQ5Rxd/vnM2QQr9Cxa2J9GXEV3kGDiZV90+PCDSVGY4VgF8y7GedI1h""".strip("\n"), "ut
 
 from Crypto.Cipher import AES
 from base64 import b64encode, b64decode
-from p9 import pkcs7_pad, pkcs7_unpad
 from functools import reduce
 import operator, sys
-from helpers import chunks, flatten, identity, fixed_xor
-
-def cbc_encrypt(pt, cipher, iv, padf=pkcs7_pad):
-  """Encrypt plaintext bytes in CBC mode
-
-  Arguments:
-  pt -- Plaintext bytes to encrypt
-  cipher -- cipher object used to encrypt (must expose encrypt(ciphertext)
-    method and block_size member)
-  iv -- Initializion vector
-  padf -- Padding function to called before encryption. Must take two
-    arguments: bytes to pad and block size, and it should return the padded
-    bytes.
-
-  Returns:
-  Bytes encrypted in CBC mode
-  
-"""
-  if not padf:
-    padf = identity
-
-  ct = [iv]
-  pt = chunks(padf(pt, cipher.block_size), cipher.block_size)
-  for i in range(len(pt)):
-    ct += [cipher.encrypt(bytes(fixed_xor(pt[i], ct[i])))]
-  return flatten(ct[1:])
-
-def cbc_decrypt(ct, cipher, iv, unpadf=pkcs7_unpad):
-  """Decrypt ciphertext bytes in CBC mode
-
-  Arguments:
-  ct -- Ciphertext bytes to decrypt
-  cipher -- cipher object used to decrypt (must expose decrypt(ciphertext)
-    method and block_size member)
-  iv -- Initializion vector
-  padf -- Padding function called after decryption. Must take two arguments:
-    bytes to pad and block size, and it should return the padded bytes.
-
-  Returns:
-  Bytes encrypted in CBC mode
-  
-  """
-
-  if not unpadf:
-    unpadf = identity
-
-  pt = []
-  ct = [iv] + chunks(ct, cipher.block_size)
-  for i in range(1, len(ct)):
-    pt += [fixed_xor(ct[i-1], cipher.decrypt(ct[i]))]
-  return unpadf(flatten(pt), cipher.block_size)
-
-def aes_cbc_encrypt(pt, key, iv, padf=pkcs7_pad):
-  return cbc_encrypt(pt, AES.new(key, AES.MODE_ECB), iv, padf)
-
-def aes_cbc_decrypt(ct, key, iv, unpadf=pkcs7_unpad):
-  return cbc_decrypt(ct, AES.new(key, AES.MODE_ECB), iv, unpadf)
+from cryptlib import fixed_xor, pkcs7_pad, pkcs7_unpad, aes_cbc_encrypt, aes_cbc_decrypt
 
 def main():
   # test cbc encryption and decryption

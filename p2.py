@@ -4,7 +4,7 @@ _author_ = "Gabe Pike"
 _email_ = "gpike@isecpartners.com"
 
 from base64 import b16encode, b16decode
-from helpers import fixed_xor
+from cryptlib import fixed_xor
 import sys
 
 def main():
