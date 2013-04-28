@@ -173,7 +173,7 @@ def aes_ecb_encrypt(pt, key, padf=pkcs7_pad):
 def aes_ecb_decrypt(ct, key, unpadf=pkcs7_unpad):
   if not unpadf:
     unpadf = identity
-  return unpadf(AES.new(key, AES.MODE_ECB).decrypt(ct))
+  return unpadf(AES.new(key, AES.MODE_ECB).decrypt(ct), AES.block_size)
 
 def main():
   key = b'YELLOW SUBMARINE'

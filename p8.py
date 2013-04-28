@@ -225,22 +225,17 @@ import sys
 def chunks(s, n):
   return [s[i:i+n] for i in range(0, len(s), n)]
 
-def detect_ecb(cts):
-  for ct in cts:
-    if (_detect_ecb(ct)):
-      return ct
-  raise Exception("Could not find ECB-encrypted ciphertext!")
-
-def _detect_ecb(ct):
+def detect_ecb(ct):
   blocks = chunks(ct, 16)
   for i in range(len(blocks)-1):
-    if blocks[i] in blocks[i+1:-1]:
+    if blocks[i] in blocks[i+1:]:
       return True
   return False
 
 def main():
-  cts = map (lambda x: b16decode(x.encode("utf8"), True), ciphertexts)
-  print("ECB-encrypted ciphertext detected:\n%s" % b16encode(detect_ecb(cts)).decode('utf8'))
+  for ct in ciphertexts:
+    if detect_ecb(b16decode(ct.encode("utf8"), True)):
+      print("ECB-encrypted ciphertext detected:\n%s" % ct)
 
 if __name__ == '__main__':
   sys.exit(main())
