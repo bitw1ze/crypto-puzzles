@@ -109,6 +109,17 @@ def main():
     b. fill block so that it only contains known dummy characters and target string
     c. brute-force starting from first unknown character
     d. discard dummy characters when prepending last block to result bytestring
+
+  BETTER PROCESS:
+  Find out where the plaintext we want begins
+  1. call oracle function with incremental dummy text until block boundary is found
+  2. store the cipehrtext and OFFSET that causes a block of padding to be added to the end
+  3. generate the ciphertext with the same amount of a different dummy character
+  4. compare to the ciphertext in #2 and find the POS of the differing block
+  5. modify the original brute-force function:
+    a. compare ciphertexts beginning at POS when decrypting byte-by-byte. 
+    b. prepend brute-force attempts with OFFSET dummy bytes for alignment
+
   """
 
   print(decrypt_ecb().decode('utf8'))
