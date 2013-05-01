@@ -22,8 +22,8 @@ from random import randint
 from base64 import b64decode
 from helpers import chunks
 from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt
+from p8 import detect_ecb
 import sys
-from time import sleep
 
 key = Random.new().read(AES.block_size)
 random_prefix = Random.new().read(randint(0, 256))
@@ -41,50 +41,56 @@ def find_blocksize(cryptf):
 
   raise Exception("Could not detect block size!")
 
-def detect_ecb(cryptf, block_size):
-  """Detect whether a given encryption function uses ECB mode"""
+def find_known_index(cryptf):
+  """
+  Find the index of our known plaintext in the ciphertext output, given the
+    encryption oracle cryptf.
 
-  entropy = Random.new()
-  pt = entropy.read(block_size)
-  pt1 = entropy.read(block_size) + pt
-  pt2 = entropy.read(block_size) + pt
-  ct1 = chunks(cryptf(pt1), block_size)
-  ct2 = chunks(cryptf(pt2), block_size)
-
-  return ct1[-1] == ct2[-1]
-
-def find_plaintext_alignment(cryptf):
+  Returns:
+    blocknum -- index of block where our plaintext begins
+    offset -- N bytes to get known plaintext to start on the block boundary
+  """
   ct1 = cryptf(b'A')
   ct2 = cryptf(b'B')
   bsz = find_blocksize(cryptf)
 
-  blockno = -1
+  # find where are plaintext block is by comparing two ciphertexts with equal size inputs
+  blocknum = -1
   for i, (blk1, blk2) in enumerate(zip(chunks(ct1, bsz), chunks(ct2, bsz))):
     if blk1 != blk2:
-      blockno = i
+      blocknum = i + 1
       break
   else:
     raise Exception("Could not find delta block!")
 
-  nextblockno = blockno + 1
-  nextblock = chunks(ct1, bsz)[nextblockno]
+  nextblock = chunks(ct1, bsz)[blocknum]
 
+  # find offset by creating blocks of equal size but different last byte
+  # when the next block differs, we know we've passed a block boundary
   offset = -1
   for i in range(bsz+1):
-    nextblock1 = chunks(cryptf(b'A'*i+b'A'), bsz)[nextblockno]
-    nextblock2 = chunks(cryptf(b'A'*i+b'B'), bsz)[nextblockno]
+    nextblock1 = chunks(cryptf(b'A'*i+b'A'), bsz)[blocknum]
+    nextblock2 = chunks(cryptf(b'A'*i+b'B'), bsz)[blocknum]
     if nextblock1 != nextblock2:
       offset = i
       break
   else:
     raise Exception("Could not find alignment offset!")
 
-  return nextblockno, offset
+  return blocknum, offset
 
-def decrypt_ecb(blockno, offset):
+"""
+
+Apply our chosen plaintext attack where blocknum is the start of our known
+plaintext in the ciphertext output and offset is the number of bytes from the
+beginning of our known plaintext to a block boundary
+
+"""
+
+def bruteforce_ecb(blocknum, offset):
   blksz = find_blocksize(encryption_oracle)
-  blockpos = blockno*blksz
-  if not detect_ecb(encryption_oracle, blksz):
+  blockpos = blocknum*blksz
+  if not detect_ecb(encryption_oracle(b'A'*(3*blksz))):
     raise Exception("Cipher not in ECB mode")
 
   ciphertext = encryption_oracle(b'')
@@ -98,13 +104,13 @@ def decrypt_ecb(blockno, offset):
 # ciphertext we are trying to match with our known plaintext 
     targetct = encryption_oracle(targetpt)
 # get position of ciphertext block we want to break
-    targetno = (len(plaintext) // blksz - 1) + blockno
+    targetno = (len(plaintext) // blksz - 1) + blocknum
     targetblk = chunks(targetct, blksz)[targetno]
 
     for j in range(0,255+1):
       guesspt = targetpt+pt_block+bytes([j])
       guessct = encryption_oracle(guesspt)
-      guessblk = chunks(guessct, blksz)[blockno]
+      guessblk = chunks(guessct, blksz)[blocknum]
       if guessblk == targetblk:
         pt_block += bytes([j])
         if len(pt_block) == blksz:
@@ -119,14 +125,14 @@ def decrypt_ecb(blockno, offset):
   return plaintext[blksz:-1]
 
 
-def decrypt_ecb_randprefix():
-  blockpos, offset = find_plaintext_alignment(encryption_oracle)
-  return decrypt_ecb(blockpos, offset)
+def bruteforce_ecb_randprefix():
+  blocknum, offset = find_known_index(encryption_oracle)
+  return bruteforce_ecb(blocknum, offset)
 
 
 def main():
   """
-  BETTER PROCESS:
+  Steps:
   Find out where the plaintext we want begins
   1. call oracle function with incremental dummy text until block boundary is found
   2. store the cipehrtext and OFFSET that causes a block of padding to be added to the end
@@ -138,7 +144,7 @@ def main():
 
   """
 
-  print(decrypt_ecb_randprefix().decode('utf8'))
+  print(bruteforce_ecb_randprefix().decode('utf8'))
     
 if __name__ == '__main__':
   sys.exit(main())
