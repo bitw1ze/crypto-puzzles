@@ -4,28 +4,28 @@ from itertools import cycle
 
 def pkcs7_pad(msg, blocksize):
   padlen = blocksize - len(msg) % blocksize
-  return bytearray(msg) + bytearray([padlen]*padlen)
+  return bytes(bytearray(msg) + bytearray([padlen]*padlen))
 
 def pkcs7_unpad(msg, blocksize):
   padlen = msg[-1]
   if padlen > blocksize or msg[-padlen:] != bytes([padlen])*padlen:
     raise Exception("Invalid padding! I sure hope you MAC'd already...")
 
-  return msg[:-padlen]
+  return bytes(msg[:-padlen])
 
 def fixed_xor(msg1, msg2):
   if len(msg1) != len(msg2):
     raise Exception("Buffers are not same size!")
 
-  return bytearray([a ^ b for (a,b) in zip(msg1, msg2) ])
+  return bytes(bytearray([a ^ b for (a,b) in zip(msg1, msg2) ]))
 
 def xor_repeat_cipher(msg, key):
-  return bytearray([m ^ k for m, k in zip(msg, cycle(key))])
+  return bytes(bytearray([m ^ k for m, k in zip(msg, cycle(key))]))
 
 def aes_ecb_encrypt(pt, key, padf=pkcs7_pad):
   if not padf:
     padf = identity
-  return AES.new(key, AES.MODE_ECB).encrypt(bytes(padf(pt, AES.block_size)))
+  return AES.new(key, AES.MODE_ECB).encrypt(padf(pt, AES.block_size))
 
 def aes_ecb_decrypt(ct, key, unpadf=pkcs7_unpad):
   if not unpadf:
