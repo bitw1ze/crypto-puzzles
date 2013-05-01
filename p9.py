@@ -4,7 +4,7 @@ _author_ = "Gabe Pike"
 _email_ = "gpike@isecpartners.com"
 
 from base64 import b16encode
-from cryptlib import pkcs7_pad, pkcs7_unpad
+from mycrypto import pkcs7_pad, pkcs7_unpad
 import sys
 
 def main():
