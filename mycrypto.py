@@ -2,16 +2,16 @@ from Crypto.Cipher import AES
 from helpers import chunks, flatten, identity
 from itertools import cycle
 
-def pkcs7_pad(pt, blocksize):
-  padlen = blocksize - len(pt) % blocksize
-  return bytearray(pt) + bytearray([padlen]*padlen)
+def pkcs7_pad(msg, blocksize):
+  padlen = blocksize - len(msg) % blocksize
+  return bytearray(msg) + bytearray([padlen]*padlen)
 
-def pkcs7_unpad(ct, blocksize):
-  padlen = ct[-1]
-  if padlen > blocksize or not all((lambda x: x == padlen, ct[-padlen:])):
+def pkcs7_unpad(msg, blocksize):
+  padlen = msg[-1]
+  if padlen > blocksize or msg[-padlen:] != bytes([padlen])*padlen:
     raise Exception("Invalid padding! I sure hope you MAC'd already...")
 
-  return ct[:-padlen]
+  return msg[:-padlen]
 
 def fixed_xor(msg1, msg2):
   if len(msg1) != len(msg2):
