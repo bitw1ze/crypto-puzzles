@@ -18,7 +18,7 @@ from random import randint
 from Crypto import Random
 from Crypto.Cipher import AES
 from helpers import chunks
-from cryptlib import pkcs7_pad, aes_ecb_encrypt, aes_ecb_decrypt
+from mycrypto import pkcs7_pad, aes_ecb_encrypt, aes_ecb_decrypt
 
 p13_key = Random.new().read(AES.block_size)
 

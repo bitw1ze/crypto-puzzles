@@ -6,7 +6,7 @@ _email_ = "gpike@isecpartners.com"
 from Crypto import Random
 from Crypto.Cipher import AES
 from random import randint
-from cryptlib import aes_ecb_encrypt, aes_ecb_decrypt, aes_cbc_encrypt, aes_cbc_decrypt
+from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt, aes_cbc_encrypt, aes_cbc_decrypt
 from p8 import detect_ecb
 import sys
 

@@ -158,7 +158,7 @@ Jk8DCkkcC3hFMQIEC0EbAVIqCFZBO1IdBgZUVA4QTgUWSR4QJwwRTWM=
 """.replace("\n","").encode("utf8")
 
 from p3 import xor_byte_bruteforce
-from cryptlib import xor_repeat_cipher
+from mycrypto import xor_repeat_cipher
 from base64 import b64decode
 import sys
 

@@ -5,7 +5,7 @@ _email_ = "gpike@isecpartners.com"
 
 from base64 import b16encode
 from itertools import cycle
-from cryptlib import xor_repeat_cipher
+from mycrypto import xor_repeat_cipher
 import sys
 
 def main():

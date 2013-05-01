@@ -161,7 +161,7 @@ S15AVD2QS1V6fhRimJSVyT6QuGb8tKRsl2N+a2Xze36vgMhw7XK7zh//jC2H
 
 from Crypto.Cipher import AES
 from base64 import b64decode
-from cryptlib import aes_ecb_decrypt
+from mycrypto import aes_ecb_decrypt
 import sys
 
 def main():

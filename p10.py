@@ -162,7 +162,7 @@ from Crypto.Cipher import AES
 from base64 import b64encode, b64decode
 from functools import reduce
 import operator, sys
-from cryptlib import fixed_xor, pkcs7_pad, pkcs7_unpad, aes_cbc_encrypt, aes_cbc_decrypt
+from mycrypto import fixed_xor, pkcs7_pad, pkcs7_unpad, aes_cbc_encrypt, aes_cbc_decrypt
 
 def main():
   # test cbc encryption and decryption

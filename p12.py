@@ -20,7 +20,7 @@ from Crypto import Random
 from Crypto.Cipher import AES
 from base64 import b64decode
 from helpers import chunks
-from cryptlib import aes_ecb_encrypt, aes_ecb_decrypt
+from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt
 import sys
 
 key = Random.new().read(AES.block_size)
