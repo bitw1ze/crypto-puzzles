@@ -88,6 +88,7 @@ beginning of our known plaintext to a block boundary
 """
 
 def bruteforce_ecb(blocknum, offset):
+# detect block size and ECB mode
   blksz = find_blocksize(encryption_oracle)
   blockpos = blocknum*blksz
   if not detect_ecb(encryption_oracle(b'A'*(3*blksz))):
@@ -96,17 +97,19 @@ def bruteforce_ecb(blocknum, offset):
   ciphertext = encryption_oracle(b'')
   plaintext = b'B'*blksz
   pt_block = b''
+
+# the fun part
   for i in range(blockpos+1, len(ciphertext)+offset):
-# calculate known plaintext bytes used to pad
+# calculate target ciphertext by correctly aligning things. 
+# must prepend dummy to align for random prefix
     dummy = b'A'*offset
-
     targetpt = dummy+plaintext[-(blksz-i%16):] if i % 16 != 0 else dummy
-# ciphertext we are trying to match with our known plaintext 
     targetct = encryption_oracle(targetpt)
-# get position of ciphertext block we want to break
-    targetno = (len(plaintext) // blksz - 1) + blocknum
-    targetblk = chunks(targetct, blksz)[targetno]
+    targetblknum = (len(plaintext) // blksz - 1) + blocknum
+    targetblk = chunks(targetct, blksz)[targetblknum]
 
+# brute-force one byte at a time by comparing each guess to target
+# only difference from p12 is that we compare later in the ciphertext
     for j in range(0,255+1):
       guesspt = targetpt+pt_block+bytes([j])
       guessct = encryption_oracle(guesspt)
@@ -122,6 +125,7 @@ def bruteforce_ecb(blocknum, offset):
   if pt_block:
     plaintext += pt_block
 
+  # Since I'm not trying to decrypt padding, I just strip off the last byte 
   return plaintext[blksz:-1]
 
 
