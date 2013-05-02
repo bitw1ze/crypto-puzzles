@@ -8,13 +8,20 @@ _email_ = "gpike@isecpartners.com"
 |        ANSWER          |
 +========================+
 
-Plaintext: 
+  Steps:
+  1. Find out where the plaintext we want begins
+    a. call oracle function twice with a single byte (different byte each time)
+    b. find block that differs in the resulting ciphertext, BLOCKNUM
+    c. make incremental calls to oracle function with N dummy bytes and
+    concatenate with a unique dummy byte.
+    d. when the ciphertexts generate a different block after BLOCKNUM, you know
+    you've reached the block boundary, OFFSET
+  2. modify the original brute-force function:
+    a. compare ciphertexts beginning at BLOCKNUM+1 when decrypting byte-by-byte. 
+    b. prepend brute-force attempts with OFFSET dummy bytes for alignment
 
-Rollin' in my 5.0
-With my rag-top down so my hair can blow
-The girlies on standby waving just to say hi
-Did you stop? No, I just drove by
 """
+
 
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -135,20 +142,7 @@ def bruteforce_ecb_randprefix():
 
 
 def main():
-  """
-  Steps:
-  Find out where the plaintext we want begins
-  1. call oracle function with incremental dummy text until block boundary is found
-  2. store the cipehrtext and OFFSET that causes a block of padding to be added to the end
-  3. generate the ciphertext with the same amount of a different dummy character
-  4. compare to the ciphertext in #2 and find the POS of the differing block
-  5. modify the original brute-force function:
-    a. compare ciphertexts beginning at POS when decrypting byte-by-byte. 
-    b. prepend brute-force attempts with OFFSET dummy bytes for alignment
-
-  """
-
-  print(bruteforce_ecb_randprefix().decode('utf8'))
+    print(bruteforce_ecb_randprefix().decode('utf8'))
     
 if __name__ == '__main__':
   sys.exit(main())
