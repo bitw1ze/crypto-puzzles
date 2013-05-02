@@ -1,3 +1,13 @@
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+"""
+
+This module contains helper functions I implemented that are commonly used in
+the challenges.
+
+"""
+
 from functools import reduce
 
 def chunks(s, n):

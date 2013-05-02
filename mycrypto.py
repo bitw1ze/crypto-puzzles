@@ -1,3 +1,13 @@
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+"""
+
+This module contains crypto-related functions I implemented that are commonly
+used in the challenges.
+
+"""
+
 from Crypto.Cipher import AES
 from helpers import chunks, flatten, identity
 from itertools import cycle

@@ -3,6 +3,8 @@
 _author_ = "Gabe Pike"
 _email_ = "gpike@isecpartners.com"
 
+""" I defined my padding functions in mycrypto.py """
+
 from base64 import b16encode
 from mycrypto import pkcs7_pad, pkcs7_unpad
 import sys
