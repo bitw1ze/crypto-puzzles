@@ -3,6 +3,18 @@
 _author_ = "Gabe Pike"
 _email_ = "gpike@isecpartners.com"
 
+"""
++========================+
+|        ANSWER          |
++========================+
+
+Unauthenticated CBC mode is vulnerable to chosen ciphertext attacks because
+each block of plaintext is XORed with the previous block of ciphertext when
+decrypted. See comments for admin_get() for comments on how I implemented this
+attack.
+
+"""
+
 from Crypto.Cipher import AES
 from Crypto import Random
 from mycrypto import aes_cbc_encrypt, aes_cbc_decrypt
@@ -26,23 +38,50 @@ def encrypt_data(data):
 
 def decrypt_data(data):
   pt = aes_cbc_decrypt(data, p16_key, p16_iv)
-  print(pt)
-  pairs = decode(pt.decode('utf8', 'ignore'))
-  print(pairs)
+  return pt
+
+def is_admin(ct):
+  pairs = decode(decrypt_data(ct).decode('utf8', 'ignore'))
   return 'admin' in pairs.keys() and pairs['admin'] == 'true'
 
 def decode(s):
   return dict([(k,v) for k,v in [p.split('=') for p in s.split(';')]])
 
 def admin_get():
-  ct = encrypt_data('fooba|admin:true')
-  pos = 16 + 6
-  chosen_ct = ct[0:pos] + b'A' + ct[pos+1:]
-  pt = decrypt_data(chosen_ct)
-  #print(pt)
+  """ 
+  
+  I add a dummy block first so as to not scramble the actual data. I then
+  concat a block containing some dummy user data, 'admin', 'true', and some
+  room for ';' and '='. I know the positions of where I want ';' and '=', so I
+  just fiddle with the right bytes in the dummy ciphertext block until they
+  generate the correct values
+
+  I'm not sure if it's considered "cheating" for the attacker to see the
+  plaintext decryption directly, so I brute-force each character and rely on
+  is_admin()'s return value to know when I get the right values. It would be
+  much faster if the attacker could see the decrypted values to validate each
+  byte is correct one at a time -- unless I'm just missing something.
+
+  """
+  ct = encrypt_data('A'*16+"fooba|admin|true")
+  pos1 = 32 + 5
+  pos2 = 32 + 11
+  for i in range(0, 256):
+    for j in range(0, 256):
+      try:
+        chosen_ct = ct[:pos1] + bytes([i]) + ct[pos1+1:pos2] + bytes([j]) + ct[pos2+1:]
+        if is_admin(chosen_ct):
+          return chosen_ct
+      except Exception as e:
+        pass
+    else:
+      continue
+    break
+  else:
+    raise Exception("Couldn't get admin! :(")
 
 def main():
-  admin_get()
+  print("Got admin! Proof:\n%s" % decode(decrypt_data(admin_get()).decode('utf8', 'ignore')))
 
 if __name__ == '__main__':
   sys.exit(main())
