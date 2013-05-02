@@ -28,8 +28,7 @@ from Crypto.Cipher import AES
 from random import randint
 from base64 import b64decode
 from helpers import chunks
-from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt
-from p8 import detect_ecb
+from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt, detect_ecb
 import sys
 
 key = Random.new().read(AES.block_size)
@@ -98,7 +97,7 @@ def bruteforce_ecb(blocknum, offset):
 # detect block size and ECB mode
   blksz = find_blocksize(encryption_oracle)
   blockpos = blocknum*blksz
-  if not detect_ecb(encryption_oracle(b'A'*(3*blksz))):
+  if not detect_ecb(encryption_oracle(b'A'*(3*blksz)), blksz):
     raise Exception("Cipher not in ECB mode")
 
   ciphertext = encryption_oracle(b'')

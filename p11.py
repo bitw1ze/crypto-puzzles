@@ -6,8 +6,7 @@ _email_ = "gpike@isecpartners.com"
 from Crypto import Random
 from Crypto.Cipher import AES
 from random import randint
-from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt, aes_cbc_encrypt, aes_cbc_decrypt
-from p8 import detect_ecb
+from mycrypto import aes_ecb_encrypt, aes_ecb_decrypt, aes_cbc_encrypt, aes_cbc_decrypt, detect_ecb
 import sys
 
 def encryption_oracle(pt): 
@@ -29,7 +28,7 @@ def encryption_oracle(pt):
     return aes_cbc_encrypt(pt, key, iv)
 
 def main():
-  print("ECB" if detect_ecb(encryption_oracle(b'A'*512)) else "CBC")
+  print("ECB" if detect_ecb(encryption_oracle(b'A'*(16*3)), 16) else "CBC")
     
 if __name__ == '__main__':
   sys.exit(main())

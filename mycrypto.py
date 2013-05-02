@@ -97,3 +97,10 @@ def aes_cbc_encrypt(pt, key, iv, padf=pkcs7_pad):
 
 def aes_cbc_decrypt(ct, key, iv, unpadf=pkcs7_unpad):
   return cbc_decrypt(ct, AES.new(key, AES.MODE_ECB), iv, unpadf)
+
+def detect_ecb(ct, blksz):
+  blocks = chunks(ct, blksz)
+  for i in range(len(blocks)-1):
+    if blocks[i] in blocks[i+1:]:
+      return True
+  return False
