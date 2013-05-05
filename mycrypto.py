@@ -12,6 +12,9 @@ from Crypto.Cipher import AES
 from helpers import chunks, flatten, identity
 from itertools import cycle
 
+class InvalidPadding(Exception):
+  pass
+
 def pkcs7_pad(msg, blocksize):
   padlen = blocksize - len(msg) % blocksize
   return bytes(bytearray(msg) + bytearray([padlen]*padlen))
@@ -19,7 +22,7 @@ def pkcs7_pad(msg, blocksize):
 def pkcs7_unpad(msg, blocksize):
   padlen = msg[-1]
   if padlen > blocksize or msg[-padlen:] != bytes([padlen])*padlen:
-    raise Exception("Invalid padding! I sure hope you MAC'd already...")
+    raise InvalidPadding("Invalid padding! I sure hope you MAC'd already...")
 
   return bytes(msg[:-padlen])
 
@@ -42,7 +45,19 @@ def aes_ecb_decrypt(ct, key, unpadf=pkcs7_unpad):
     unpadf = identity
   return unpadf(AES.new(key, AES.MODE_ECB).decrypt(ct), AES.block_size)
 
-def cbc_encrypt(pt, cipher, iv, padf=pkcs7_pad):
+def aes_cbc_encrypt(pt, key, iv, padf=pkcs7_pad):
+  if not padf:
+    padf = identity
+
+  return cbc_encrypt(padf(pt, AES.block_size), AES.new(key, AES.MODE_ECB), iv)
+
+def aes_cbc_decrypt(ct, key, iv, unpadf=pkcs7_unpad):
+  if not unpadf:
+    unpadf = identity
+  base_cipher = AES.new(key, AES.MODE_ECB)
+  return unpadf(cbc_decrypt(ct, base_cipher, iv), AES.block_size)
+
+def cbc_encrypt(pt, cipher, iv):
   """Encrypt plaintext bytes in CBC mode
 
   Arguments:
@@ -58,16 +73,13 @@ def cbc_encrypt(pt, cipher, iv, padf=pkcs7_pad):
   Bytes encrypted in CBC mode
   
 """
-  if not padf:
-    padf = identity
-
   ct = [iv]
-  pt = chunks(padf(pt, cipher.block_size), cipher.block_size)
+  pt = chunks(pt, cipher.block_size)
   for i in range(len(pt)):
     ct += [cipher.encrypt(bytes(fixed_xor(pt[i], ct[i])))]
   return flatten(ct[1:])
 
-def cbc_decrypt(ct, cipher, iv, unpadf=pkcs7_unpad):
+def cbc_decrypt(ct, cipher, iv):
   """Decrypt ciphertext bytes in CBC mode
 
   Arguments:
@@ -83,20 +95,11 @@ def cbc_decrypt(ct, cipher, iv, unpadf=pkcs7_unpad):
   
   """
 
-  if not unpadf:
-    unpadf = identity
-
   pt = []
   ct = [iv] + chunks(ct, cipher.block_size)
   for i in range(1, len(ct)):
     pt += [fixed_xor(ct[i-1], cipher.decrypt(ct[i]))]
-  return unpadf(flatten(pt), cipher.block_size)
-
-def aes_cbc_encrypt(pt, key, iv, padf=pkcs7_pad):
-  return cbc_encrypt(pt, AES.new(key, AES.MODE_ECB), iv, padf)
-
-def aes_cbc_decrypt(ct, key, iv, unpadf=pkcs7_unpad):
-  return cbc_decrypt(ct, AES.new(key, AES.MODE_ECB), iv, unpadf)
+  return flatten(pt)
 
 def detect_ecb(ct, blksz):
   blocks = chunks(ct, blksz)
