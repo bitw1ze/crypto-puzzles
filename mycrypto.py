@@ -30,7 +30,7 @@ def fixed_xor(msg1, msg2):
     if len(msg1) != len(msg2):
         raise Exception("Buffers are not same size!")
 
-    return bytes(bytearray([ord(a) ^ ord(b) for (a,b) in zip(msg1, msg2)]))
+    return bytes(bytearray([a ^ b for (a,b) in zip(msg1, msg2) ]))
 
 def xor_repeat_cipher(msg, key):
     return bytes(bytearray([m ^ k for m, k in zip(msg, cycle(key))]))
