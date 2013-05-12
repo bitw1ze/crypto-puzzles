@@ -1,10 +1,9 @@
 class MT19937:
 
 
-    MT = [0]*624
-    index = 0
-
     def __init__(self, seed):
+        self.index = 0
+        self.MT = [0]*624
         self.MT[0] = seed
         for i in range(1, 623+1):
             self.MT[i] = (0xFFFFFFFF & ((0x6c078965 * (self.MT[i-1] ^
