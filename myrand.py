@@ -15,7 +15,6 @@ class MT19937:
         else:
             self.MT = state
 
-
     def rand(self):
         if self.index == 0:
             self.__generate_state()
@@ -28,7 +27,17 @@ class MT19937:
         
         self.index = (self.index + 1) % 624
         return y
-    
+
+    def read(self, nbytes):
+        output = []
+        rng_out = None
+        for i in range(nbytes):
+            slot = i % 4
+            if slot == 0:
+                tmprand = self.rand()
+            output.append((tmprand >> (slot * 8)) & 0xFF)
+        return bytes(output)
+ 
     def __generate_state(self):
         for i in range(623+1):
             y = (self.MT[i] & 0x80000000) + (self.MT[(i+1) % 624] & 0x7fffffff)
