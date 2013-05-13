@@ -10,8 +10,8 @@ class MT19937:
             self.MT = [0]*624
             self.MT[0] = seed
             for i in range(1, 623+1):
-                self.MT[i] = (0xFFFFFFFF & ((0x6c078965 * (self.MT[i-1] ^
-                             (self.MT[i-1] >> 30)))+i))
+                self.MT[i] = 0x6c078965 * (self.MT[i-1] ^ (self.MT[i-1] >> 30)) + i
+                self.MT[i] &= 0xFFFFFFFF 
         else:
             self.MT = state
 
