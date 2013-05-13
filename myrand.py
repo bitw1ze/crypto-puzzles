@@ -1,17 +1,24 @@
 class MT19937:
 
 
-    def __init__(self, seed):
+    def __init__(self, seed=None, state=None):
         self.index = 0
-        self.MT = [0]*624
-        self.MT[0] = seed
-        for i in range(1, 623+1):
-            self.MT[i] = (0xFFFFFFFF & ((0x6c078965 * (self.MT[i-1] ^
-                         (self.MT[i-1] >> 30)))+i))
+        if not state:
+            if not seed:
+                from time import time
+                seed = int(time())
+            self.MT = [0]*624
+            self.MT[0] = seed
+            for i in range(1, 623+1):
+                self.MT[i] = (0xFFFFFFFF & ((0x6c078965 * (self.MT[i-1] ^
+                             (self.MT[i-1] >> 30)))+i))
+        else:
+            self.MT = state
+
 
     def rand(self):
         if self.index == 0:
-            self.__generate()
+            self.__generate_state()
 
         y = self.MT[self.index]
         y ^= (y >> 11)
@@ -21,8 +28,8 @@ class MT19937:
         
         self.index = (self.index + 1) % 624
         return y
-
-    def __generate(self):
+    
+    def __generate_state(self):
         for i in range(623+1):
             y = (self.MT[i] & 0x80000000) + (self.MT[(i+1) % 624] & 0x7fffffff)
             self.MT[i] = self.MT[(i + 397) % 624] ^ (y >> 1)
