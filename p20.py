@@ -9,7 +9,7 @@ from Crypto import Random
 def calc_score(pt):
     ''' our good friend from problem 3 is back again! '''
     score = 0
-    charpoints = {'e':12, 't':9, 'a':8, 'o':8, 'i':7, 'n':7, 's':6, 'h':6, 'r':6, 'd':4, 'u':4}
+    charpoints = {'e':12, 't':9, 'a':8, 'o':8, 'i':7, 'n':7, 's':6, 'h':6, 'r':6, 'd':4, 'u':4, 'T':9, 'I':8, 'R':8, 'S':8, 'M':8, 'L':8, 'Y':7}
 
     for x in pt:
         x = chr(x)
@@ -45,21 +45,11 @@ def break_fail_ctr(cts):
     return [fixed_xor(keystream, ct[:shortest]) for ct in cts]
     # holy shit it worked
 
-def generate_ciphertexts():
-    pts = None
-    with open('p19-input.txt') as fh:
-        pts = [b64decode(pt.encode('utf8')) for pt in fh.readlines()]
-
-    key = Random.new().read(AES.block_size)
-    nonce = b"\x00" * AES.block_size
-    cts = []
-    for pt in pts:
-        cts.append(aes_ctr_crypt(pt, key, nonce))
-
-    return pts
-
 def main():
-    ciphertexts = generate_ciphertexts()
+    ciphertexts = None
+    with open('p20-input.txt') as fh:
+        ciphertexts = [b64decode(pt.encode('utf8')) for pt in fh.readlines()]
+
     plaintexts = break_fail_ctr(ciphertexts)
     for pt in plaintexts:
         print(pt.decode('utf8'))
