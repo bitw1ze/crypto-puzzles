@@ -1,3 +1,17 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+"""
+
+I'm not really sure the instructions are asking for. My first solution to
+this problem was actually the solution for #20 because it was the obvious way
+of doing it. I decided to do a chosen plaintext attack for this problem. Hope
+that'll do.
+
+"""
+
 from sys import exit
 from base64 import b64decode
 from Crypto import Random

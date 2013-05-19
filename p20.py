@@ -1,3 +1,10 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+""" Breaking fixed nonce CTR mode like a repeating XOR cipher """
+
 import string
 from sys import exit
 from base64 import b64decode
@@ -7,9 +14,11 @@ from Crypto.Cipher import AES
 from Crypto import Random
 
 def calc_score(pt):
-    ''' our good friend from problem 3 is back again! '''
+    ''' hey it's our good friend from problem 3! '''
     score = 0
-    charpoints = {'e':12, 't':9, 'a':8, 'o':8, 'i':7, 'n':7, 's':6, 'h':6, 'r':6, 'd':4, 'u':4, 'T':9, 'I':8, 'R':8, 'S':8, 'M':8, 'L':8, 'Y':7}
+    charpoints =    {'e':12, 't':9, 'a':8, 'o':8, 'i':7, 'n':7, 's':6, 'h':6,
+                    'r':6, 'd':4, 'u':4, 'T':9, 'I':8, 'R':8, 'S':8, 'M':8,
+                    'L':8, 'Y':7}
 
     for x in pt:
         x = chr(x)
@@ -43,7 +52,6 @@ def break_fail_ctr(cts):
         keystream += bytes([keybyte])
 
     return [fixed_xor(keystream, ct[:shortest]) for ct in cts]
-    # holy shit it worked
 
 def main():
     ciphertexts = None

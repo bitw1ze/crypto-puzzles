@@ -1,13 +1,18 @@
-#!/usr/bin/env python3.2 
+#!/usr/bin/env python3.2
 
-from mycrypto import (aes_cbc_decrypt, aes_cbc_encrypt, 
-                     pkcs7_pad, pkcs7_unpad, InvalidPadding)
-from Crypto import Random
-from Crypto.Cipher import AES
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+""" See break_dat_block() for the bulk of what this is doing. """
+
+from sys import exit
 from random import randint
 from base64 import b64decode
+from Crypto import Random
+from Crypto.Cipher import AES
 from helpers import chunks
-from sys import exit
+from mycrypto import (aes_cbc_decrypt, aes_cbc_encrypt, 
+                     pkcs7_pad, pkcs7_unpad, InvalidPadding)
 
 key = None
 IV = None

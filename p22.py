@@ -1,3 +1,10 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+""" If you're impatient like me, set simulate=True """
+
 from time import time, sleep
 from sys import exit
 from myrand import MT19937

@@ -1,3 +1,10 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
+""" See MT19937 implementation in myrand.py """
+
 from sys import exit
 from time import time
 from myrand import MT19937

@@ -1,3 +1,8 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
 from sys import exit
 from time import time
 from operator import lshift, rshift
@@ -18,12 +23,23 @@ def untemper(y):
 
     return y
 
-def _untemper(y, shiftn, shiftf, magic=None):
+def _untemper(y, shiftn, shiftf, magic=0xFFFFFFFF):
+    ''' a somewhat generic untempering function for MT19937 output
+
+    y       --  value you want to reverse 
+    shiftn  --  number of bits to shift.
+    shiftf  --  shift function (right or left); defined as a function of two
+                arguments, where arg1 is the value to shift and arg2 is the
+                number of bits to shift.
+    magic   --  magic value to AND with. If not specified it will have no
+                effect.
+    
+    '''
     result = y
     tmp = None
     for i in range(32//shiftn+1):
         tmp = shiftf(result, shiftn)
-        result = y ^ (tmp & magic) if magic else y ^ tmp
+        result = y ^ (tmp & magic) 
     return result
 
 def reverse_rng(rng):

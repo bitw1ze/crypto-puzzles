@@ -1,3 +1,8 @@
+#!/usr/bin/env python3.2
+
+_author_ = "Gabe Pike"
+_email_ = "gpike@isecpartners.com"
+
 from mycrypto import aes_ctr_crypt
 from base64 import b64encode
 from sys import exit
@@ -8,8 +13,8 @@ def main():
     pts = [
         "been spending most our lives",
         "living in a ganster's paradise",
-        "nuclear launch codes",
-        "the FBI will never catch me, my address is @!#*&%)!@#",
+        "the nuclear launch code is 281-330-8004",
+        "the FBI will never catch me, i'm behind 7 proxies bro",
         "the quieter you are the more you are able to hear"
     ]
     cts = []
