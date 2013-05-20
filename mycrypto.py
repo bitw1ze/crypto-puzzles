@@ -85,6 +85,9 @@ def ctr_crypt(msg, cipher, nonce):
 def aes_ctr_crypt(msg, key, nonce):
     return ctr_crypt(msg, AES.new(key, AES.MODE_ECB), nonce)
 
+aes_ctr_encrypt = aes_ctr_crypt
+aes_ctr_decrypt = aes_ctr_crypt
+
 def cbc_encrypt(pt, cipher, iv):
     """
 
