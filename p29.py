@@ -2,12 +2,22 @@ import struct
 from sys import exit
 from thirdparty.sha1 import sha1
 from base64 import b16encode
+from random import randint
+from Crypto import Random
+
+key = None
 
 def MAC(message, key):
+
     return sha1(key + message)
 
 def authenticate(message, key, mac):
+
     return MAC(message, key) == mac
+
+def blackbox_authenticate(message, mac):
+
+    return authenticate(message, key, mac)
 
 def sha1_pad(msg, prefix_len=0, key_len=0):
     
@@ -27,32 +37,35 @@ def hash_length_extension(prefix, mac, injection, key_len):
     padded_injection = sha1_pad(injection, prefix_len=prefix_len)
 
     forged_message = padded_prefix + injection
-    forged_mac = sha1(message=padded_injection, seed=mac)
+    forged_mac = sha1(message=padded_injection, seed=mac, pad=False)
     return forged_message, forged_mac
 
 def main():
+
+    global key
+
+    key = Random.new().read(randint(1, 32))
     message = b'crypto=hard;pimping=easy'
-    key = b'123456'
-    message = b'from=123&to=456&amount=50'
     injection = b';admin=true'
-    key = b's3cRe7-#!@~'
     mac = MAC(message, key)
-    injection = b'&to=666&amount=99999'
 
     print("Key:     %s" % key)
-    print()
     print("Message: %s " % str(message, 'utf8'))
     print("MAC:     %s" % str(b16encode(mac).lower(), 'utf8'))
     print()
 
-    forged_message, forged_mac = (
-            hash_length_extension(message, mac, injection, len(key)))
+    # guess the key length
+    for i in range(1, 32+1):
+        fmsg, fmac = hash_length_extension(message, mac, injection, key_len=i)
+        if blackbox_authenticate(fmsg, fmac):
+            break
 
-    print("Forged message: %s " % forged_message)
-    print("Forged MAC:     %s " % str(b16encode(forged_mac).lower(), 'utf8'))
+    print("Key length:     %d " % i)
+    print("Forged message: %s " % fmsg)
+    print("Forged MAC:     %s " % str(b16encode(fmac).lower(), 'utf8'))
     print()
 
-    if authenticate(forged_message, key, forged_mac):
+    if blackbox_authenticate(fmsg, fmac):
         print("Authenticated the message")
     else:
         print("Failed to authenticate the message")
