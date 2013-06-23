@@ -25,8 +25,6 @@ def sha1_pad(msg, prefix_len=0, key_len=0):
     one_pad = b"\x80"
     zero_pad = b"\x00" * (55 - key_len - (length % 64))
     len_pad = struct.pack('>Q', (length+prefix_len+key_len)*8)
-    #print(key_len, prefix_len)
-    #print(length, len(one_pad), len(zero_pad), len(len_pad))
 
     return msg + one_pad + zero_pad + len_pad
 
