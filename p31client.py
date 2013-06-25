@@ -5,8 +5,7 @@
 This program guesses each byte of the HMAC by observing time differences. To
 test it, first run the web server in one window. Then run the client.
 
-./p31-server.py
-./p31-client.py
+Requires the "requests" HTTP module to run
 '''
 
 import sys
@@ -15,7 +14,7 @@ from time import time
 
 import requests
 
-from p31 import *
+from p31server import host, port, latency
 
 proto = 'http'
 path = 'verify'

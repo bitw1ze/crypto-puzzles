@@ -2,11 +2,14 @@
 
 ''' Runs a web server with a compares a SHA1-HMAC insecurely 
 
-See p31-client.py for more information '''
+Requires the "pyramid" web framework to run
+
+See p32-client.py for more information '''
 
 from sys import exit
 from hashlib import sha1
 from base64 import b16decode, b16encode
+from time import sleep
 
 from wsgiref.simple_server import make_server
 from pyramid.config import Configurator
@@ -14,9 +17,10 @@ from pyramid.response import Response
 from pyramid.httpexceptions import HTTPInternalServerError
 
 from mycrypto import sha1_hmac
-from time import sleep
-from p31 import *
 
+host = 'localhost'
+port = 9090
+latency = 0.005
 key = b'123456'
 
 def verify_signature(request):

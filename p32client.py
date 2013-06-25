@@ -6,8 +6,7 @@ This program guesses the HMAC by collecting statistics on each byte, one at a
 time. The byte value that takes the longest to return is selected.  test it,
 first run the web server in one window. Then run the client.
 
-./p32-server.py
-./p32-client.py
+Requires the "requests" HTTP module to run
 '''
 
 import sys
@@ -16,7 +15,7 @@ from time import time
 
 import requests
 
-from p32 import *
+from p32server import host, port, latency
 
 proto = 'http'
 path = 'verify'
