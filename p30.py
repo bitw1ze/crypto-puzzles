@@ -19,20 +19,20 @@ def blackbox_authenticate(message, mac):
 
     return authenticate(message, key, mac)
 
-def MD4_pad(msg, prefix_len=0, key_len=0):
+def md4_pad(msg, prefix_len=0, key_len=0):
     
     length = len(msg) 
     one_pad = b"\x80"
     zero_pad = b"\x00" * (55 - key_len - (length % 64))
-    len_pad = struct.pack('>Q', (length+prefix_len+key_len)*8)
+    len_pad = struct.pack('<Q', (length+prefix_len+key_len)*8)
 
     return msg + one_pad + zero_pad + len_pad
 
 def hash_length_extension(prefix, mac, injection, key_len):
 
     prefix_len = 64 * ((len(prefix) + key_len) // 64) + 64
-    padded_prefix = MD4_pad(prefix, key_len=key_len)
-    padded_injection = MD4_pad(injection, prefix_len=prefix_len)
+    padded_prefix = md4_pad(prefix, key_len=key_len)
+    padded_injection = md4_pad(injection, prefix_len=prefix_len)
 
     forged_message = padded_prefix + injection
     forged_mac = MD4(message=padded_injection, seed=mac, pad=False).digest()
@@ -42,28 +42,31 @@ def main():
 
     global key
 
-    key = Random.new().read(randint(1, 32))
+    MAX_KEY_LEN = 16
+    key = Random.new().read(randint(1, MAX_KEY_LEN))
     message = b'crypto=hard;pimping=easy'
     injection = b';admin=true'
     mac = MAC(message, key)
 
-    print("Key:     %s" % key)
+    print("Key:     %s" % str(b16encode(key), 'utf8'))
     print("Message: %s " % str(message, 'utf8'))
-    print("MAC:     %s" % str(b16encode(mac).lower(), 'utf8'))
+    print("MAC:     %s" % str(b16encode(mac), 'utf8'))
     print()
 
     # guess the key length
-    for i in range(1, 32+1):
+    authenticated = False
+    for i in range(1, MAX_KEY_LEN+1):
         fmsg, fmac = hash_length_extension(message, mac, injection, key_len=i)
         if blackbox_authenticate(fmsg, fmac):
+            authenticated = True
             break
 
     print("Key length:     %d " % i)
     print("Forged message: %s " % fmsg)
-    print("Forged MAC:     %s " % str(b16encode(fmac).lower(), 'utf8'))
+    print("Forged MAC:     %s " % str(b16encode(fmac), 'utf8'))
     print()
 
-    if blackbox_authenticate(fmsg, fmac):
+    if authenticated:
         print("Authenticated the message")
     else:
         print("Failed to authenticate the message")
