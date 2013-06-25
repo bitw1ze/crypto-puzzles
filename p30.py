@@ -1,9 +1,15 @@
+#!/usr/bin/env python3
+
+''' Forge a signature via MD4 hash length extension attack
+
+See thirdparty/md4.py for modification of existing MD4 implementation '''
+
 import struct
 from sys import exit
-from thirdparty.md4 import MD4
-from base64 import b16encode
 from random import randint
+from base64 import b16encode
 from Crypto import Random
+from thirdparty.md4 import MD4
 
 key = None
 

@@ -1,18 +1,26 @@
+#!/usr/bin/env python3
+
+''' Test out implementation of insecure SHA1 keyed MAC '''
+
 from sys import exit
 from thirdparty.sha1 import sha1
 
 def MAC(message, key):
+
     return sha1(key + message)
 
 def authenticate(message, key, mac):
+
     return MAC(message, key) == mac
 
 def validate_message(message, key, mac):
+
     print("\nkey:     %s" % str(key, 'utf8'))
     print('message: "%s" (%s)' % (message.decode('utf8'), 
           "valid" if authenticate(message,key,mac) else "invalid"))
 
 def main():
+
     key = b'123456'
     message = b'no one can break this crypto because i am an OG'
     mac = MAC(message, key)

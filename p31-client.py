@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+
+''' Attack insecure compare of SHA1-HMAC with a large delay between compares
+
+This program guesses each byte of the HMAC by observing time differences. To
+test it, first run the web server in one window. Then run the client.
+
+./p31-server.py
+./p31-client.py
+'''
+
 import sys
 from base64 import b16encode
 from time import time
@@ -12,6 +23,7 @@ url = '%s://%s:%d/%s' % (proto, host, port, path)
 
 def main():
 
+    # signature for this message: 434D11195A10D3DF19B0FCEBC6C0C147E3BC5FFA
     message = 'foobar'
     signature = bytearray(b'\x00'*20)
 

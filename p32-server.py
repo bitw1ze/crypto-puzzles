@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+''' Runs a web server with a compares a SHA1-HMAC insecurely 
+
+See p32-client.py for more information '''
+
 from sys import exit
 from hashlib import sha1
 from base64 import b16decode, b16encode

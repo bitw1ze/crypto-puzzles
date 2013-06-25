@@ -1,7 +1,6 @@
-#!/usr/bin/env  python3.2
+#!/usr/bin/env python3
 
-_author_  = "Gabe Pike"
-_email_   = "gpike@isecpartners.com"
+''' Recover the key from decryption oracle using CBC mode where IV=key '''
 
 from sys import exit
 from base64 import b16decode, b16encode
@@ -16,10 +15,10 @@ from mycrypto import (aes_cbc_encrypt, aes_cbc_decrypt,
 p27_key = Random.new().read(AES.block_size)
 p27_iv  = p27_key
 
-class InvalidAscii(Exception):
-    pass
+class InvalidAscii(Exception):  pass
 
 def encrypt_data(data):
+
     if ';' in data or '=' in data:
         raise Exception("Invalid userdata")
 
@@ -38,9 +37,11 @@ def decrypt_data(data):
     return pt
 
 def decode_data(s):
+
     return dict([(k,v) for k,v in [p.split('=') for p in s.split(';')]])
 
 def admin_get():
+
     key = None
     ct = encrypt_data("A"*16)
     ct = ct[:16] + b"\x00"*16 + ct[:16] + b"\x00"*16
@@ -48,7 +49,7 @@ def admin_get():
         try:
             decrypt_data(ct)
         except InvalidPadding as e:
-            # Since padding is enabled, we must find a ciphertext with correct
+            # Since padding is used, we must find a ciphertext with correct 
             # padding by fiddling with the last byte of the 2nd to last block.
             ct = ct[:16] + b"\x00"*16 + ct[:16] 
             ct += b"\x00"*15+bytes([i]) + b"\x00"*16
@@ -56,20 +57,15 @@ def admin_get():
         except InvalidAscii as e:
             e = str(e)
             index = e.find(':') + 2
-            pt = bytes(e[index:], 'utf8')
-            pt = b16decode(pt)
+            pt = b16decode(bytes(e[index:], 'utf8'))
             key = fixed_xor(pt[:16], pt[32:48])
-            data =  b'comment1=it is happening;'
-            data += b'comment2=there is no hope;'
-            data += b'comment3=you could have stopped this;'
-            data += b'comment4=but now it is too late;'
-            data += b'userdata=shhhhh, only dreams now;'
-            data += b'admin=true'
+            data =  b'crypto=hard;pimping=easy;admin=true'
             return aes_cbc_encrypt(data, key, key, pkcs7_pad)
 
     raise Exception("Your code is bad and you should feel bad")
 
 def main():
+
     result = decode_data(decrypt_data(admin_get()).decode('utf8', 'ignore'))
     print("Got admin! Proof:")
     print(result)

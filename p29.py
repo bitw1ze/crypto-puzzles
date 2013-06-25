@@ -1,9 +1,15 @@
+#!/usr/bin/env python3
+
+''' Forge a signature via SHA1 hash length extension attack
+
+See thirdparty/sha1.py for modification of existing SHA1 implementation '''
+
 import struct
 from sys import exit
-from thirdparty.sha1 import sha1
 from base64 import b16encode
 from random import randint
 from Crypto import Random
+from thirdparty.sha1 import sha1
 
 key = None
 

@@ -1,8 +1,6 @@
-#!/usr/bin/env python3.2
+#!/usr/bin/env python3
 
-_author_ = "Gabe Pike"
-_email_ = "gpike@isecpartners.com"
-
+''' Do some bit-flipping on unauthenticated CTR-encrypted data to get admin '''
 
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -13,6 +11,7 @@ p26_key = Random.new().read(AES.block_size)
 p26_nonce = Random.new().read(AES.block_size)
 
 def encrypt_data(data):
+
     if ';' in data or '=' in data:
         raise Exception("Invalid userdata")
 
@@ -21,17 +20,21 @@ def encrypt_data(data):
     return aes_ctr_encrypt(data, p26_key, p26_nonce)
 
 def decrypt_data(data):
+
     pt = aes_ctr_decrypt(data, p26_key, p26_nonce)
     return pt
 
 def is_admin(ct):
+
     pairs = decode(decrypt_data(ct).decode('utf8', 'ignore'))
     return 'admin' in pairs.keys() and pairs['admin'] == 'true'
 
 def decode(s):
+
     return dict([(k,v) for k,v in [p.split('=') for p in s.split(';')]])
 
 def admin_get():
+
     ct = encrypt_data("fooba|admin|true")
     pos1 = 32+5
     pos2 = 32+11
@@ -51,6 +54,7 @@ def admin_get():
         raise Exception("Couldn't get admin! :(")
 
 def main():
+
     result = decode(decrypt_data(admin_get()).decode('utf8', 'ignore'))
     print("Got admin! Proof:\n%s" % result)
 
