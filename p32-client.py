@@ -24,7 +24,8 @@ def main():
             params = '/%s/%s' % (message, str(b16encode(signature), 'utf8'))
 
             total = 0
-            for k in range(10):
+            attempts = 13
+            for k in range(attempts):
                 begin = time()
                 requests.get(url+params)
                 elapsed = time() - begin
@@ -36,7 +37,8 @@ def main():
         sys.stdout.flush()
 
     print()
-    response = requests.get(url)
+    params = '/%s/%s' % (message, str(b16encode(signature), 'utf8'))
+    response = requests.get(url+params)
     if response.status_code == 200:
         print("Success!")
         print(str(b16encode(signature), 'utf8'))
