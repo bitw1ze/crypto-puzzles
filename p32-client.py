@@ -37,7 +37,7 @@ def main():
 
     print()
     response = requests.get(url)
-    if response.status == 200:
+    if response.status_code == 200:
         print("Success!")
         print(str(b16encode(signature), 'utf8'))
     else:
