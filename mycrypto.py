@@ -144,3 +144,23 @@ def detect_ecb(ct, blksz):
         if blocks[i] in blocks[i+1:]:
             return True
     return False
+
+def hmac(hashf):
+
+    def _hmac(key, message):
+        blocksize = hashf().block_size
+        if len(key) > blocksize:
+            key = hashf(key).digest()
+        elif len(key) < blocksize:
+            key = key + (b'\x00' * (blocksize - len(key)))
+
+        o_key_pad = fixed_xor(key, b'\x5c' * blocksize)
+        i_key_pad = fixed_xor(key, b'\x36' * blocksize)
+
+        return hashf(o_key_pad + hashf(i_key_pad + message).digest())
+    
+    return _hmac
+
+from hashlib import sha1
+
+sha1_hmac = hmac(sha1)
