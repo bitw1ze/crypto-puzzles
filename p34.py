@@ -35,6 +35,8 @@ class Node:
             secret = self.negotiate_secret(peer_pubkey)
 
         _secret = bytes("%x" % secret, 'utf8')
+        if len(_secret) % 2 != 0:
+            _secret = b'0' + _secret
         self.symkey = sha1(_secret).digest()[:16]
 
         return self.symkey
