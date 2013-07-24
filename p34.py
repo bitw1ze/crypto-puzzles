@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.2
+
 from hashlib import sha1
 from sys import exit
 from base64 import b16encode, b16decode
