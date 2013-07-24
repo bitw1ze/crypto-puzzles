@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.2
+
 import os
 from hashlib import sha256
 from hmac import HMAC
@@ -13,40 +15,39 @@ password=b'muhpassword'
 client = {}
 server = {}
 
-# server
+# server generates v from the password verifier and DH group params
 salt = os.urandom(8)
 xH = sha256(salt + password).hexdigest()
 x = int(xH, 16)
 v = pow(g, x, N)
 
-# client
+# client sends username and A to server
 a = int(str(b16encode(os.urandom(72)), 'utf8'), 16)
 A = pow(g, a, N)
-# sock.send(password + salt)
 
-# server
+# server sends B to client
 b = int(str(b16encode(os.urandom(72)), 'utf8'), 16)
 B = k*v + pow(g, b, N)
 # sock.send(salt + B)
 
-# client & server
+# client and server calculate 'u' from the public keys
 uH = sha256(bytes(str(A) + str(B), 'utf8')).hexdigest()
 u = int(uH, 16)
 
-# client
+# client calculates K 
 xH = sha256(salt + password).hexdigest()
 x = int(xH, 16)
 S = pow(B - k * pow(g, x, N), a + u * x, N)
 K = sha256(bytes(str(S), 'utf8')).digest()
 
-# server
+# server calculates K
 S = pow(A * pow(v, u, N), b, N)
 K = sha256(bytes(str(S), 'utf8')).digest()
 
-# client
+# client HMACs K to get auth string
 token = HMAC(K, salt, sha256).digest()
 
-# server - compare HMACs while forgetting about timing attacks
+# authentication is successful, as the client knows the password
 if token == HMAC(K, salt, sha256).digest():
     print('Authentication successful')
 else:
