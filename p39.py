@@ -1,7 +1,13 @@
 #!/usr/bin/env python3.2
 
-# yes i am this lazy
+from base64 import b16encode, b16decode
+from sys import exit
+
+# yes, i am this lazy
 from fractions import gcd
+from Crypto.PublicKey.pubkey import getStrongPrime
+
+from helpers import *
 
 def egcd(a, b):
     
@@ -16,34 +22,55 @@ def invmod(a, m):
     g, x, y = egcd(a, m)
     return x % m if g == 1 else 0
 
-def rand_bignum():
+def rsa_encrypt_bytes(pubkey, message):
 
-    pass
+    return _rsa_crypt_bytes(pubkey, message)
 
-def rsa_encrypt(pubkey, message):
+def rsa_decrypt_bytes(privkey, message):
 
-    return pow(message, pubkey[0], pubkey[1])
+    return _rsa_crypt_bytes(privkey, message)
 
-def rsa_decrypt(privkey, message):
+def _rsa_crypt_bytes(k, msg):
 
-    return pow(message, privkey[0], privkey[1])
+    k = (b2i(k[0]), b2i(k[1]))
+    return i2b(_rsa_crypt(k, b2i(msg)))
 
-def generate_keypair():
+def _rsa_crypt(k, msg):
 
-    p = 98509491925355636814624722856481164974976024092749
-    q = 64859058853096061872133820986796618624188088272603
-    n = p * q
-    et = (p-1)*(q-1)
+    return pow(msg, k[0], k[1])
+
+def generate_keypair_bytes(bits):
+
+    pubkey, privkey = _generate_keypair(bits)
+    return (i2b(pubkey[0]), i2b(pubkey[1])), (i2b(privkey[0]), i2b(privkey[1]))
+
+def _generate_keypair(bits):
+
     e = 3
     while True:
+
+        p = getStrongPrime(bits)
+        q = getStrongPrime(bits)
+        n = p * q
+        et = (p-1)*(q-1)
+
         if gcd(et, e) == 1:
             break
-        e += 1
     d = invmod(e, et)
     return ((e, n), (d, n))
 
-pubkey, privkey = generate_keypair()
-message = 42
-ciphertext = rsa_encrypt(pubkey, message)
-plaintext = rsa_decrypt(privkey, ciphertext)
-print(plaintext)
+def main():
+
+    pubkey, privkey = generate_keypair_bytes(1024)
+    print("e:", b2hs(pubkey[0]))
+    print("d:", b2hs(privkey[0]))
+    print("n:", b2hs(privkey[1]))
+    message = b"I be tossin', enforcin', my style is awesome / I'm causin' more Family Feuds than Richard Dawson!"
+    ciphertext = rsa_encrypt_bytes(pubkey, message)
+    plaintext = rsa_decrypt_bytes(privkey, ciphertext)
+    print("encrypted:", b2hs(ciphertext))
+    print("decrypted:", b2u(plaintext))
+
+if __name__ == '__main__':
+
+    exit(main())
