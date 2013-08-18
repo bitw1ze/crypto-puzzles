@@ -12,15 +12,22 @@ from functools import reduce
 from base64 import b16encode, b16decode
 
 def chunks(s, n):
-  return [bytes(s[i:i+n]) for i in range(0, len(s), n)]
+    ''' split bytes s into chunks of size n '''
+
+    return [bytes(s[i:i+n]) for i in range(0, len(s), n)]
 
 def flatten(lst):
-  return bytes([]) if not lst else bytes(reduce(lambda a,b: a+b, lst))
+    ''' flatten an list of list of bytes into a single list of bytes '''
+
+    return bytes([]) if not lst else bytes(reduce(lambda a,b: a+b, lst))
 
 def identity(*args):
-  return args[0]
+    ''' simply return the first argument '''
+
+    return args[0]
 
 def b2i(data):
+    ''' convert bytes to integer '''
 
     _ = str(b16encode(data), 'utf8')
     if len(_) % 2 is not 0:
@@ -28,6 +35,7 @@ def b2i(data):
     return int(_, 16)
 
 def i2b(data):
+    ''' convert integer to bytes '''
 
     x = hex(data)[2:]
     if len(x) % 2 != 0:
@@ -36,18 +44,22 @@ def i2b(data):
     return b16decode(x, True)
 
 def i2s(data):
+    ''' convert integer to string '''
 
     return str(i2b(data), 'utf8')
 
 def b2u(data):
+    ''' convert binary to unicode string '''
 
     return str(data, 'utf8')
 
 def u2b(data):
+    ''' convert unicode string to binary '''
 
     return bytes(data, 'utf8')
 
 def b2hs(data):
+    ''' convert binary to hex string '''
 
     x = b2u(b16encode(data))
     if len(x) % 2 != 0:
