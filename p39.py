@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.2
 
+# yes i am this lazy
 from fractions import gcd
 
 def egcd(a, b):
@@ -20,16 +21,10 @@ def rand_bignum():
     pass
 
 def rsa_encrypt(pubkey, message):
-    print("ENCRYPTING")
-    print("e: %d" % pubkey[0])
-    print("n: %d" % pubkey[1])
 
     return pow(message, pubkey[0], pubkey[1])
 
 def rsa_decrypt(privkey, message):
-    print("DECRYPTING")
-    print("d: %d" % privkey[0])
-    print("n: %d" % privkey[1])
 
     return pow(message, privkey[0], privkey[1])
 
@@ -44,14 +39,11 @@ def generate_keypair():
         if gcd(et, e) == 1:
             break
         e += 1
-    e = 5860433983155613419396388808578642169570584742076441436113747269795218700332009569861122501530578287
-    d = 4370212695082959697644347549013759337535856224600700845783256501293135585098885497690009531778314671
+    d = invmod(e, et)
     return ((e, n), (d, n))
 
 pubkey, privkey = generate_keypair()
 message = 42
-print(message)
 ciphertext = rsa_encrypt(pubkey, message)
-print(ciphertext)
-plaintext = rsa_decrypt(privkey, message)
+plaintext = rsa_decrypt(privkey, ciphertext)
 print(plaintext)
