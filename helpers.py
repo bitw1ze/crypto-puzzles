@@ -35,6 +35,10 @@ def i2b(data):
     x = bytes(x, 'utf8')
     return b16decode(x, True)
 
+def i2s(data):
+
+    return str(i2b(data), 'utf8')
+
 def b2u(data):
 
     return str(data, 'utf8')
