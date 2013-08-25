@@ -48,12 +48,18 @@ def i2s(data):
 
     return str(i2b(data), 'utf8')
 
-def b2u(data):
+def s2i(data):
+    ''' string to integer '''
+
+    return b2i(u2b(data))
+
+
+def b2s(data):
     ''' convert binary to unicode string '''
 
     return str(data, 'utf8')
 
-def u2b(data):
+def s2b(data):
     ''' convert unicode string to binary '''
 
     return bytes(data, 'utf8')
@@ -61,7 +67,7 @@ def u2b(data):
 def b2hs(data):
     ''' convert binary to hex string '''
 
-    x = b2u(b16encode(data))
+    x = b2s(b16encode(data))
     if len(x) % 2 != 0:
         x = '0' + x
     return x
