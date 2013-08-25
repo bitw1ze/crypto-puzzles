@@ -19,6 +19,14 @@ def _rsa_crypt_bytes(k, msg):
     msg = b2i(msg)
     return i2b(_rsa_crypt(k, msg))
 
+def rsa_encrypt_num(k, msg):
+
+    return _rsa_crypt(k, msg)
+
+def rsa_decrypt_num(k, msg):
+
+    return _rsa_crypt(k, msg)
+
 def _rsa_crypt(k, msg):
 
     return pow(msg, k[0], k[1])
@@ -28,9 +36,8 @@ def generate_keypair_bytes(bits):
     pubkey, privkey = _generate_keypair(bits)
     return (i2b(pubkey[0]), i2b(pubkey[1])), (i2b(privkey[0]), i2b(privkey[1]))
 
-def _generate_keypair(bits):
+def _generate_keypair(bits, e=65535):
 
-    e = 3
     while True:
 
         p = getStrongPrime(bits)
