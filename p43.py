@@ -2,10 +2,6 @@
 
 import sys
 
-from Crypto.Random.random import randint
-from hashlib import sha1
-
-from helpers import *
 from mymath import invmod
 from mydsa import dsa_sign, q, H, Signature, PrivateKey
 
