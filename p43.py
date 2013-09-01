@@ -3,8 +3,9 @@
 import sys
 
 from mymath import invmod
-from mydsa import dsa_sign, q, H, Signature, PrivateKey
+from mydsa import dsa_sign, Q, H, Signature, PrivateKey
 
+q = Q
 
 def dsa_bruteforce():
 
