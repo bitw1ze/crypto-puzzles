@@ -11,7 +11,8 @@ def dsa_bruteforce():
     message =  b"For those that envy a MC it can be hazardous to your health\n"
     message += b"So be friendly, a matter of life and death, "
     message += b"just like a etch-a-sketch\n"
-    sig = Signature(r=0x548099063082341131477253921760299949438196259240,
+    sig = Signature(m=message,
+                    r=0x548099063082341131477253921760299949438196259240,
                     s=0x857042759984254168557880549501802188789837994940)
 
     # Let's brute-force each k value until we find the right privkey
