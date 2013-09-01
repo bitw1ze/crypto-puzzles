@@ -10,7 +10,7 @@ g=0x5958c9d3898b224b12672c0b98e06c60df923cb8bc999d119458fef538b8fa4046c8db53039d
 
 PublicKey = namedtuple("PublicKey", ["y"])
 PrivateKey = namedtuple("PrivateKey", ["x"])
-Signature = namedtuple("Signature", ["r", "s"])
+Signature = namedtuple("Signature", ["m", "r", "s"])
 
 H = lambda _: b2i(sha1(_).digest())
 
@@ -21,20 +21,19 @@ def dsa_generate_keypair():
 
     return PublicKey(y), PrivateKey(x)
 
+def dsa_sign(privkey, message, k=None):
 
-def dsa_sign(privkey, message):
-
+    m = b2i(message)
     s = 0
     while s == 0:
         r = 0
-        m = b2i(message)
         while r == 0:
-            k = randint(1, q-1)
+            k = k or randint(1, q-1)
             r = pow(g, k, p) % q
 
         s = (invmod(k, q) * (H(message) + privkey.x * r)) % q
 
-    return Signature(r, s)
+    return Signature(message, r, s)
 
 def dsa_verify(pubkey, message, sig):
 
