@@ -4,7 +4,7 @@ import sys
 from hashlib import sha1
 
 from mymath import invmod
-from mydsa import dsa_generate_keypair, dsa_sign, dsa_verify, Q, H, Signature, PrivateKey, PublicKey
+from mydsa import generate_keypair, sign, verify, Q, H, Signature, PrivateKey, PublicKey
 from helpers import i2b,s2b
 
 q = Q
@@ -12,7 +12,7 @@ y=0x84ad4719d044495496a3201c8ff484feb45b962e7302e56a392aee4abab3e4bdebf2955b4736
 pubkey = PublicKey(y)
 
 
-def dsa_bruteforce():
+def bruteforce():
 
     message =  b"For those that envy a MC it can be hazardous to your health\n"
     message += b"So be friendly, a matter of life and death, "
@@ -23,8 +23,8 @@ def dsa_bruteforce():
 
     for k in range(2**16):
         x = ((sig.s*k - H(message)) * invmod(sig.r, q)) % q
-        s = dsa_sign(PrivateKey(x), message)
-        if dsa_verify(pubkey, s):
+        s = sign(PrivateKey(x), message)
+        if verify(pubkey, s):
             _x = hex(x)[2:]
             fingerprint = sha1(s2b(_x)).hexdigest()
             print("Found key!")
@@ -36,7 +36,7 @@ def dsa_bruteforce():
 
 def main():
 
-    dsa_bruteforce()
+    bruteforce()
     
 if __name__ == '__main__':
     sys.exit(main())

@@ -14,14 +14,14 @@ Signature = namedtuple("Signature", ["m", "r", "s"])
 
 H = lambda _: b2i(sha1(_).digest())
 
-def dsa_generate_keypair(p=P, q=Q, g=G):
+def generate_keypair(p=P, q=Q, g=G):
 
     x = randint(1, q-1)
     y = pow(g, x, p)
 
     return PublicKey(y), PrivateKey(x)
 
-def dsa_sign(privkey, message, p=P, q=Q, g=G):
+def sign(privkey, message, p=P, q=Q, g=G):
 
     s = 0
     while s == 0:
@@ -34,7 +34,7 @@ def dsa_sign(privkey, message, p=P, q=Q, g=G):
 
     return Signature(message, r, s)
 
-def dsa_verify(pubkey, sig, p=P, q=Q, g=G):
+def verify(pubkey, sig, p=P, q=Q, g=G):
 
     m = b2i(sig.m)
 
@@ -44,14 +44,14 @@ def dsa_verify(pubkey, sig, p=P, q=Q, g=G):
     v = ((pow(g, u_1, p) * pow(pubkey.y, u_2, p)) % p) % q
     return v == sig.r
 
-def dsa_test():
+def test():
 
     message = b"BITCOIN RABBIT LIKES TO PARTY"
-    pubkey, privkey = dsa_generate_keypair()
-    sig = dsa_sign(privkey, message)
+    pubkey, privkey = generate_keypair()
+    sig = sign(privkey, message)
     print(message)
     print(pubkey)
     print(privkey)
     print(sig)
-    assert(dsa_verify(pubkey, message, sig))
+    assert(verify(pubkey, message, sig))
 

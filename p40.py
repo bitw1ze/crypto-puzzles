@@ -5,15 +5,15 @@ import operator
 import sys
 
 from helpers import b2i, i2s
-from myrsa import generate_keypair_bytes, rsa_encrypt_bytes
+from myrsa import generate_keypair_bytes, encrypt_bytes
 from mymath import invmod, root3
 
 def main():
 
     KEY_SIZE = 512
     msg = b"SUPER FSCKING SECRET SAUCE"
-    pubkeys = [generate_keypair_bytes(KEY_SIZE)[0] for i in range(3)]
-    cts = [b2i(rsa_encrypt_bytes(k, msg)) for k in pubkeys]
+    pubkeys = [generate_keypair_bytes(KEY_SIZE, e=3)[0] for i in range(3)]
+    cts = [b2i(encrypt_bytes(k, msg)) for k in pubkeys]
     moduli = [b2i(i[1]) for i in pubkeys]
     crt = 0
 

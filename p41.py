@@ -2,7 +2,7 @@
 
 import sys
 
-from myrsa import rsa_decrypt_num
+from myrsa import decrypt_num
 from helpers import *
 from mymath import invmod
 
@@ -15,7 +15,7 @@ D = 0x1CFD6FE4AF3D29BB7DBA0DF616D3A72E01E621733EEAD155CF905FD3F4A9C2936CCFB841FE
 def submit(ciphertext):
 
     privkey = (D, N)
-    return rsa_decrypt_num(privkey, ciphertext)
+    return decrypt_num(privkey, ciphertext)
 
 
 def main():

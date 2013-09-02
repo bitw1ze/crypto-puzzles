@@ -2,12 +2,12 @@
 
 import sys
 
-from mydsa import dsa_generate_keypair, dsa_verify, P, Q, G, H, Signature
+from mydsa import generate_keypair, verify, P, Q, G, H, Signature
 from helpers import *
 from mymath import invmod
 from Crypto.Random.random import randint
 
-def dsa_sign_bad(privkey, message, p=P, q=Q, g=G):
+def sign_bad(privkey, message, p=P, q=Q, g=G):
 
     m = b2i(message)
     k = randint(1, q-1)
@@ -21,7 +21,7 @@ def main():
     msg1 = b'Hello, world'
     msg2 = b'Goodbye, world'
 
-    pubkey, privkey = dsa_generate_keypair()
+    pubkey, privkey = generate_keypair()
 
     z = 9001
     r = pow(pubkey.y, z, P) % Q
@@ -36,7 +36,7 @@ def main():
     print(sig1)
     print(sig2)
 
-    if dsa_verify(pubkey, sig2, g=P+1) and dsa_verify(pubkey, sig2, g=P+1):
+    if verify(pubkey, sig2, g=P+1) and verify(pubkey, sig2, g=P+1):
         print("Valid signatures")
     else:
         print("Invalid signatures")

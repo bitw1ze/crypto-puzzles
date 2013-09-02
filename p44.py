@@ -5,9 +5,9 @@ import sys
 from hashlib import sha1
 from helpers import *
 from mymath import invmod
-from mydsa import dsa_sign, dsa_generate_keypair, H, Q, Signature, PrivateKey
+from mydsa import sign, generate_keypair, H, Q, Signature, PrivateKey
 
-def dsa_recover_nonce():
+def recover_nonce():
 
     infile = "p44-input.txt" if len(sys.argv) == 1 else sys.argv[1]
     r = 0
@@ -35,7 +35,7 @@ def dsa_recover_nonce():
             m2, s2 = H(z2.m), z2.s
             k = ((m1-m2) * invmod((s1-s2)%Q, Q)) % Q
             x = ((z1.s*k - m1) * invmod(z1.r, Q)) % Q
-            _sig = dsa_sign(PrivateKey(x), z1.m)
+            _sig = sign(PrivateKey(x), z1.m)
             key_digest = sha1(bytes(hex(x)[2:], 'utf8')).hexdigest()
             if key_digest == 'ca8f6f7c66fa362d40760d135b763eb8527d3d52':
                 return x
@@ -45,7 +45,7 @@ def dsa_recover_nonce():
 
 def main():
 
-    x = dsa_recover_nonce()
+    x = recover_nonce()
     print("Found your private key!")
     print(hex(x)[2:])
         
