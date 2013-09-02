@@ -46,12 +46,12 @@ def i2b(data):
 def i2s(data):
     ''' convert integer to string '''
 
-    return str(i2b(data), 'utf8')
+    return str(i2b(data), 'utf8', 'ignore')
 
 def s2i(data):
     ''' string to integer '''
 
-    return b2i(u2b(data))
+    return b2i(s2b(data))
 
 
 def b2s(data):
